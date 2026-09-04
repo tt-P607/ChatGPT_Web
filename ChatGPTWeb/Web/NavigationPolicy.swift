@@ -17,7 +17,8 @@ struct NavigationPolicy {
         "oaiusercontent.com"
     ]
     private let authenticationTerms = [
-        "auth", "authorize", "login", "oauth", "signin", "sign-in", "sso", "session", "challenge"
+        "auth", "authorize", "login", "oauth", "signin", "sign-in", "sso", "session", "challenge",
+        "google", "apple", "microsoft", "accounts.google.com", "appleid.apple.com", "live.com"
     ]
 
     func decision(
@@ -36,7 +37,8 @@ struct NavigationPolicy {
             if isAuthenticationTransition(from: sourceURL, to: url) {
                 return .allow
             }
-            if navigationType == .linkActivated {
+            // 只有当明确不在认证流程中，且是用户点击激活的外部普通链接，才在外部打开
+            if navigationType == .linkActivated && !isAuthenticationContext(url) && !(sourceURL.map(isAuthenticationContext) ?? false) {
                 return .openExternally
             }
             return .inspectResponse

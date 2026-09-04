@@ -225,17 +225,18 @@ extension NavigationCoordinator: WKUIDelegate {
             }
             webView.load(navigationAction.request)
             return nil
-        case .authenticate:
-            return authenticationCoordinator.openPopup(
-                configuration: configuration,
-                sourceURL: webView.url
-            )
-        case .inspectResponse:
+        case .authenticate, .inspectResponse:
+            // 登录弹窗或弹出的第三方认证页面在受控认证 WebView 中打开
             return authenticationCoordinator.openPopup(
                 configuration: configuration,
                 sourceURL: webView.url
             )
         case .openExternally:
+            // 严防误伤认证 URL：如果涉及 auth/login/openai，仍在内部打开
+            if navigationPolicy.isOfficialOpenAIURL(url) || navigationPolicy.isAuthenticationContext(url) {
+                webView.load(navigationAction.request)
+                return nil
+            }
             openExternally(url)
             return nil
         case .block:
