@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://codemagic.io/codemagic-schema.json
+
+workflows:
+  ios-trollstore:
+    name: iOS TrollStore IPA
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    environment:
+      xcode: latest
+    scripts:
+      - name: 检查 Xcode 工程
+        script: |
+          xcodebuild -version
+          mkdir -p build
+          xcodebuild -project ChatGPTWeb.xcodeproj -list -json > build/xcode-project.json
+          grep -q '"ChatGPTWeb"' build/xcode-project.json
+      - name: 构建无签名 Release IPA
+        script: bash scripts/build-unsigned-ipa.sh
+      - name: 检查 IPA 包结构
+        script: |
+          test -f build/ChatGPTWeb-unsigned.ipa
+          unzip -t build/ChatGPTWeb-unsigned.ipa
+          unzip -l build/ChatGPTWeb-unsigned.ipa | grep -q "Payload/ChatGPTWeb.app/Info.plist"
+    artifacts:
+      - build/ChatGPTWeb-unsigned.ipa
+      - build/DerivedData/Build/Products/Release-iphoneos/ChatGPTWeb.app
+      - build/xcode-project.json
