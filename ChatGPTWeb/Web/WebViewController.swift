@@ -61,8 +61,8 @@ final class WebViewController: UIViewController {
 
     private func loadHomePage() {
         var request = URLRequest(url: Self.homeURL)
-        // 允许优先使用本地协议缓存（HTML/CSS/JS/字体等离线快速复用）
-        request.cachePolicy = .useProtocolCachePolicy
+        // 启动时直接复用已有页面缓存；下拉刷新仍会主动向服务器校验更新。
+        request.cachePolicy = .returnCacheDataElseLoad
         request.timeoutInterval = 30.0
         webView.load(request)
     }
