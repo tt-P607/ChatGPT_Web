@@ -27,6 +27,7 @@
 | 错误 | 尝试次数 | 解决方案 |
 |---|---:|---|
 | PowerShell 5.1 按 ANSI 读取无 BOM 的 UTF-8 plist，导致 XML 误报损坏 | 1 | 静态检查显式指定 `-Encoding UTF8` |
+| Codemagic（Xcode 16 / Swift 6）报告 `URLRequest.init(url:)` 推断失败，以及未弱捕获 `self` 时 `guard let self` 报非可选绑定错误 | 1 | 将构造器/方法引用改为显式闭包，并在闭包捕获列表中补齐 `weak self` |
 
 ## 最终验证
 

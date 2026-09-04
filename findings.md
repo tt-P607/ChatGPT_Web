@@ -6,3 +6,5 @@
 - Safari、`ASWebAuthenticationSession` 与 `WKWebView` 不共享 Cookie；OpenAI 未提供本 App 可控制的 OAuth 回调时，无法安全地把系统认证会话强制迁回 WKWebView。
 - 第三方附件 URL 必须先允许 WebKit 获取响应，才能根据 MIME Type 或 `Content-Disposition` 区分下载与普通外链。
 - iOS App Icon 已使用无透明通道的 1024×1024 PNG；Asset Catalog 引用完整。
+- Codemagic 当前 macOS 环境使用的是 Xcode 16 系列工具链，对 `Optional.map(Type.init)` 的 Typed Throws 推断更严格，应使用标准显式闭包 `{ URLRequest(url: $0) }`。
+- 闭包内部若需使用 `guard let self`，捕获列表必须显式声明 `weak self`，避免把强引用的非可选 `self` 当作可选值绑定。

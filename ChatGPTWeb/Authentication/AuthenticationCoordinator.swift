@@ -32,7 +32,7 @@ final class AuthenticationCoordinator {
         let viewController = makeViewController(
             configuration: configuration,
             initialRequest: nil,
-            allowsThirdPartyAuthentication: sourceURL.map(navigationPolicy.isAuthenticationContext) ?? false
+            allowsThirdPartyAuthentication: sourceURL.map { navigationPolicy.isAuthenticationContext($0) } ?? false
         )
         present(viewController)
         return viewController.webView
@@ -320,7 +320,7 @@ extension AuthenticationViewController: WKNavigationDelegate {
         alert.addAction(UIAlertAction(title: "关闭", style: .cancel) { [weak self] _ in
             self?.onClose?()
         })
-        alert.addAction(UIAlertAction(title: "重试", style: .default) { [weak webView] _ in
+        alert.addAction(UIAlertAction(title: "重试", style: .default) { [weak self, weak webView] _ in
             guard let self else { return }
             if let lastMainFrameRequest = self.lastMainFrameRequest {
                 webView?.load(lastMainFrameRequest)

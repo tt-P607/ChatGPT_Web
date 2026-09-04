@@ -64,7 +64,7 @@ final class NavigationCoordinator: NSObject {
     private func showLoadError(_ error: Error) {
         let urlError = error as? URLError
         guard urlError?.code != .cancelled else { return }
-        failedRequest = failedRequest ?? webView?.url.map(URLRequest.init(url:))
+        failedRequest = failedRequest ?? webView?.url.map { URLRequest(url: $0) }
         webView?.scrollView.refreshControl?.endRefreshing()
         errorView?.show(
             title: urlError?.code == .notConnectedToInternet ? "网络连接已断开" : "页面加载失败",
