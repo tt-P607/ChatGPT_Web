@@ -54,7 +54,7 @@ final class WebViewController: UIViewController {
             self?.navigationCoordinator.retryAfterFailure()
         }
 
-        // 限制下拉刷新只在顶部触发，避免与页面内部列表手势冲突导致掉帧
+        let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshPage(_:)), for: .valueChanged)
         webView.scrollView.refreshControl = refreshControl
     }
