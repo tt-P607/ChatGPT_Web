@@ -14,11 +14,13 @@ struct NavigationPolicy {
         "chatgpt.com",
         "openai.com",
         "oaistatic.com",
-        "oaiusercontent.com"
+        "oaiusercontent.com",
+        "auth0.com"
     ]
     private let authenticationTerms = [
         "auth", "authorize", "login", "oauth", "signin", "sign-in", "sso", "session", "challenge",
-        "google", "apple", "microsoft", "accounts.google.com", "appleid.apple.com", "live.com"
+        "google", "apple", "microsoft", "accounts.google.com", "appleid.apple.com", "live.com",
+        "client_id", "response_type", "redirect_uri", "state", "code_challenge"
     ]
 
     func decision(

@@ -127,6 +127,14 @@ extension NavigationCoordinator: WKNavigationDelegate {
         case .inspectResponse:
             decisionHandler(.allow)
         case .openExternally:
+            // 登录/认证相关 URL 绝不跳到 Safari
+            if navigationPolicy.isOfficialOpenAIURL(url) || navigationPolicy.isAuthenticationContext(url) {
+                if navigationAction.targetFrame?.isMainFrame != false {
+                    failedRequest = navigationAction.request
+                }
+                decisionHandler(.allow)
+                return
+            }
             decisionHandler(.cancel)
             openExternally(url)
         case .block:
@@ -144,6 +152,7 @@ extension NavigationCoordinator: WKNavigationDelegate {
         } else if navigationResponse.isForMainFrame,
                   let url = navigationResponse.response.url,
                   !navigationPolicy.isOfficialOpenAIURL(url),
+                  !navigationPolicy.isAuthenticationContext(url),
                   !navigationPolicy.isAuthenticationTransition(from: webView.url, to: url) {
             decisionHandler(.cancel)
             openExternally(url)
