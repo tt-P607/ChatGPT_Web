@@ -54,13 +54,17 @@ final class WebViewController: UIViewController {
             self?.navigationCoordinator.retryAfterFailure()
         }
 
-        let refreshControl = UIRefreshControl()
+        // 限制下拉刷新只在顶部触发，避免与页面内部列表手势冲突导致掉帧
         refreshControl.addTarget(self, action: #selector(refreshPage(_:)), for: .valueChanged)
         webView.scrollView.refreshControl = refreshControl
     }
 
     private func loadHomePage() {
-        webView.load(URLRequest(url: Self.homeURL))
+        var request = URLRequest(url: Self.homeURL)
+        // 允许优先使用本地协议缓存（HTML/CSS/JS/字体等离线快速复用）
+        request.cachePolicy = .useProtocolCachePolicy
+        request.timeoutInterval = 30.0
+        webView.load(request)
     }
 
     @objc private func refreshPage(_ sender: UIRefreshControl) {
