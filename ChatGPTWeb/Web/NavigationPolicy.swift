@@ -10,9 +10,14 @@ enum NavigationDecision {
 }
 
 struct NavigationPolicy {
-    private let officialDomainRoots = ["chatgpt.com", "openai.com"]
+    private let officialDomainRoots = [
+        "chatgpt.com",
+        "openai.com",
+        "oaistatic.com",
+        "oaiusercontent.com"
+    ]
     private let authenticationTerms = [
-        "auth", "authorize", "login", "oauth", "signin", "sign-in", "sso"
+        "auth", "authorize", "login", "oauth", "signin", "sign-in", "sso", "session", "challenge"
     ]
 
     func decision(
@@ -29,13 +34,16 @@ struct NavigationPolicy {
                 return .allow
             }
             if isAuthenticationTransition(from: sourceURL, to: url) {
-                return .authenticate
+                return .allow
             }
             if navigationType == .linkActivated {
                 return .openExternally
             }
             return .inspectResponse
         case "http":
+            if isOfficialOpenAIURL(url) {
+                return .allow
+            }
             return .openExternally
         case "about", "blob":
             return .allow
@@ -53,7 +61,7 @@ struct NavigationPolicy {
             return .allow
         }
         if isAuthenticationTransition(from: sourceURL, to: url) {
-            return .authenticate
+            return .allow
         }
         return decision(
             for: url,
@@ -64,7 +72,6 @@ struct NavigationPolicy {
     }
 
     func isOfficialOpenAIURL(_ url: URL) -> Bool {
-        guard url.scheme?.lowercased() == "https" else { return false }
         guard let host = normalizedHost(of: url) else { return false }
         return officialDomainRoots.contains { root in
             host == root || host.hasSuffix("." + root)

@@ -143,7 +143,8 @@ extension NavigationCoordinator: WKNavigationDelegate {
             decisionHandler(.download)
         } else if navigationResponse.isForMainFrame,
                   let url = navigationResponse.response.url,
-                  !navigationPolicy.isOfficialOpenAIURL(url) {
+                  !navigationPolicy.isOfficialOpenAIURL(url),
+                  !navigationPolicy.isAuthenticationTransition(from: webView.url, to: url) {
             decisionHandler(.cancel)
             openExternally(url)
         } else {
